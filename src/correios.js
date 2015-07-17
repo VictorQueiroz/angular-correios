@@ -7,7 +7,8 @@ var join = function () {
 
 function CorreiosProvider (){
 	var defaults = this.defaults = {
-		endpoint: 'http://cep.correiocontrol.com.br'
+		endpoint: '//viacep.com.br/ws',
+    		lastParameter: '/json'
 	};
 	this.$get = CorreiosFactory;
 	function CorreiosFactory ($http) {
@@ -15,7 +16,7 @@ function CorreiosProvider (){
 
 		Correios.prototype = {
 			endpoint: function (postalCode) {
-				return join(defaults.endpoint, postalCode + '.json');
+				return join(defaults.endpoint, postalCode + defaults.lastParameter);
 			},
 			transformResponse: function (res) {
 				return res.data;
