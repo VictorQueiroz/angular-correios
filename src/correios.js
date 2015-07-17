@@ -1,32 +1,27 @@
-var join = function () {
-	var delimiter = '/';
-	var array = Array.prototype.slice.apply(arguments);
-
-	return Array.prototype.join.apply(array, [delimiter]);
-};
+function createEndpoint (endpoint, postalCode) {
+	return endpoint.replace(/\{POSTAL_CODE\}/g, postalCode);
+}
 
 function CorreiosProvider (){
-	var defaults = this.defaults = {
-		endpoint: '//viacep.com.br/ws',
-    		lastParameter: '/json'
+	var defaults 	= this.defaults = {
+		endpoint: '//viacep.com.br/ws/{POSTAL_CODE}/json'
 	};
-	this.$get = CorreiosFactory;
-	function CorreiosFactory ($http) {
-		function Correios () {}
 
-		Correios.prototype = {
+	this.$get = CorreiosFactory;
+
+	function CorreiosFactory ($http) {
+		return {
 			endpoint: function (postalCode) {
-				return join(defaults.endpoint, postalCode + defaults.lastParameter);
+				return this.createEndpoint(defaults.endpoint, postalCode);
 			},
 			transformResponse: function (res) {
 				return res.data;
 			},
+			createEndpoint: createEndpoint,
 			get: function (postalCode) {
 				return $http.get(this.endpoint(postalCode)).then(this.transformResponse);
 			}
 		};
-
-		return new Correios();
 	}
 }
 
